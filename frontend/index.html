@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0614" />
+  <title>Slim Music</title>
+  <script src="/telegram-web-app.js"></script>
+  <style>
+    html,body{background:#0b0614;color:#f2eef8;margin:0;font-family:system-ui,-apple-system,sans-serif}
+    #bootStatus{padding:16px;font-size:14px;color:#a89bb8}
+  </style>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div id="bootStatus">Завантаження Slim Music…</div>
+  <div id="app" class="hidden">
+    <header class="topbar">
+      <button type="button" class="icon-btn" id="btnClose" aria-label="Закрити">✕</button>
+      <div class="user-block">
+        <div class="avatar" id="avatar">SL</div>
+        <div class="user-meta">
+          <div class="greeting" id="greeting">Привет, Slim</div>
+          <div class="stats" id="statsLine">0 треков · 0 плейлистов · 0 прослушиваний</div>
+        </div>
+      </div>
+    </header>
+
+    <main id="screens">
+      <!-- HOME -->
+      <section class="screen active" data-screen="home">
+        <button type="button" class="add-card" id="btnOpenAdd">
+          <div class="add-icon">＋</div>
+          <div>
+            <div class="add-title">Добавить трек</div>
+            <div class="add-sub">YouTube посилання або прямий URL аудіо</div>
+          </div>
+        </button>
+
+        <h2 class="section-h">Недавно добавленные</h2>
+        <div id="recentList" class="track-list"></div>
+        <p class="empty hidden" id="recentEmpty">Поки немає треків — додайте перший</p>
+
+        <h2 class="section-h">Самые популярные</h2>
+        <div id="popularList" class="track-list"></div>
+        <p class="empty hidden" id="popularEmpty">Ще немає лайків</p>
+      </section>
+
+      <!-- SEARCH -->
+      <section class="screen" data-screen="search">
+        <h1 class="screen-title">Поиск</h1>
+        <label class="search-field">
+          <span class="sr-only">Пошук</span>
+          <input id="searchInput" type="search" placeholder="Назва або виконавець…" autocomplete="off" />
+        </label>
+        <div id="searchList" class="track-list"></div>
+        <p class="empty" id="searchHint">Введіть запит</p>
+      </section>
+
+      <!-- LIBRARY -->
+      <section class="screen" data-screen="library">
+        <h1 class="screen-title">Библиотека</h1>
+        <p class="screen-sub">Лайкнуті та додані вами</p>
+        <div id="libraryList" class="track-list"></div>
+        <p class="empty hidden" id="libraryEmpty">Бібліотека порожня</p>
+
+        <h2 class="section-h">Плейлисты</h2>
+        <div class="playlist-row">
+          <input id="playlistName" type="text" placeholder="Новий плейлист…" maxlength="120" />
+          <button type="button" class="chip-btn" id="btnCreatePlaylist">Створити</button>
+        </div>
+        <div id="playlistList" class="playlist-list"></div>
+      </section>
+
+      <!-- EDITOR (admin) -->
+      <section class="screen" data-screen="editor">
+        <h1 class="screen-title">Редактор</h1>
+        <p class="screen-sub">Редагування назви / виконавця (адмін)</p>
+        <div id="editorList" class="track-list"></div>
+      </section>
+    </main>
+
+    <!-- Add modal -->
+    <div class="modal hidden" id="addModal">
+      <div class="modal-card">
+        <h2>Добавить трек</h2>
+        <label class="field">
+          <span>URL (YouTube або mp3/m4a/ogg/wav)</span>
+          <input id="addUrl" type="url" placeholder="https://…" />
+        </label>
+        <label class="field">
+          <span>Назва (опційно)</span>
+          <input id="addTitle" type="text" placeholder="Авто з джерела" />
+        </label>
+        <label class="field">
+          <span>Виконавець (опційно)</span>
+          <input id="addArtist" type="text" placeholder="Авто з джерела" />
+        </label>
+        <p class="modal-err hidden" id="addErr"></p>
+        <div class="modal-actions">
+          <button type="button" class="ghost-btn" id="btnAddCancel">Скасувати</button>
+          <button type="button" class="primary-btn" id="btnAddSubmit">Додати</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Now playing bar -->
+    <div class="player hidden" id="playerBar">
+      <div class="player-thumb" id="playerThumb">♪</div>
+      <div class="player-meta">
+        <div class="player-title" id="playerTitle">—</div>
+        <div class="player-artist" id="playerArtist">—</div>
+      </div>
+      <button type="button" class="icon-btn" id="btnPlayPause" aria-label="Play">▶</button>
+      <audio id="audioEl" preload="none"></audio>
+    </div>
+
+    <footer class="footer-links">
+      <button type="button" class="link-btn" id="btnReport">Повідомити про проблему</button>
+      <button type="button" class="link-btn" id="btnEditor">Відкрити редактор</button>
+    </footer>
+
+    <nav class="bottom-nav">
+      <button type="button" class="nav-btn active" data-nav="home">
+        <span class="nav-ico">⌂</span><span>Главная</span>
+      </button>
+      <button type="button" class="nav-btn" data-nav="search">
+        <span class="nav-ico">⌕</span><span>Поиск</span>
+      </button>
+      <button type="button" class="nav-btn" data-nav="library">
+        <span class="nav-ico">☰</span><span>Библиотека</span>
+      </button>
+    </nav>
+  </div>
+  <script src="/app.js"></script>
+</body>
+</html>

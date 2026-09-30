@@ -1,0 +1,1 @@
+"""Slim Music Telegram bot."""

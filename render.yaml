@@ -1,0 +1,39 @@
+# Render Blueprint — free Web Service + free Postgres
+# Secrets (BOT_TOKEN, ADMIN_IDS, WEBAPP_URL) — set in dashboard; do not commit.
+
+databases:
+  - name: slim-music-db
+    plan: free
+    databaseName: slim_music
+    user: slim
+    region: frankfurt
+    postgresMajorVersion: "16"
+
+services:
+  - type: web
+    name: slim-music-miniapp
+    runtime: python
+    plan: free
+    region: frankfurt
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.8"
+      - key: BOT_TOKEN
+        sync: false
+      - key: ADMIN_IDS
+        sync: false
+      - key: WEBAPP_URL
+        sync: false
+      - key: DEV_BYPASS
+        value: "0"
+      - key: BRAND_NAME
+        value: Slim Music
+      - key: YOUTUBE_ENABLED
+        value: "0"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: slim-music-db
+          property: connectionString
