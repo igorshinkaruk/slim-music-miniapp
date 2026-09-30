@@ -16,3 +16,5 @@ __pycache__
 *.zip
 data/media
 .pytest_cache
+cookies.txt
+youtube_cookies.txt

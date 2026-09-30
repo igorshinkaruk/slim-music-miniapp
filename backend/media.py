@@ -99,6 +99,14 @@ async def download_direct_audio(url: str) -> dict[str, Any]:
     }
 
 
+def _yt_cookie_args() -> list[str]:
+    """yt-dlp --cookies when a Netscape file is configured."""
+    path = config.ensure_youtube_cookies()
+    if path and path.is_file():
+        return ["--cookies", str(path)]
+    return []
+
+
 def _yt_extract_sync(url: str) -> dict[str, Any]:
     """Run yt-dlp to download best audio and extract metadata."""
     if not config.YOUTUBE_ENABLED:
@@ -106,9 +114,11 @@ def _yt_extract_sync(url: str) -> dict[str, Any]:
 
     config.MEDIA_DIR.mkdir(parents=True, exist_ok=True)
     out_tmpl = str(config.MEDIA_DIR / f"{uuid.uuid4().hex}.%(ext)s")
+    cookies = _yt_cookie_args()
 
     cmd = [
         "yt-dlp",
+        *cookies,
         "--no-playlist",
         "-f",
         "bestaudio/best",
@@ -137,6 +147,7 @@ def _yt_extract_sync(url: str) -> dict[str, Any]:
         out_tmpl2 = str(config.MEDIA_DIR / f"{uuid.uuid4().hex}.%(ext)s")
         cmd2 = [
             "yt-dlp",
+            *cookies,
             "--no-playlist",
             "-f",
             "bestaudio/best",

@@ -46,11 +46,14 @@ app.add_middleware(
 async def on_startup() -> None:
     await init_db()
     config.MEDIA_DIR.mkdir(parents=True, exist_ok=True)
+    cookies = config.ensure_youtube_cookies()
     logger.info(
-        "Started %s (DEV_BYPASS=%s, MEDIA=%s)",
+        "Started %s (DEV_BYPASS=%s, MEDIA=%s, YOUTUBE=%s, COOKIES=%s)",
         config.BRAND_NAME,
         config.DEV_BYPASS,
         config.MEDIA_DIR,
+        config.YOUTUBE_ENABLED,
+        "yes" if cookies else "no",
     )
 
 

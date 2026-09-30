@@ -32,7 +32,10 @@ services:
       - key: BRAND_NAME
         value: Slim Music
       - key: YOUTUBE_ENABLED
-        value: "0"
+        value: "1"
+      # Netscape cookies.txt as base64. Set in the dashboard — do not commit the value.
+      - key: YOUTUBE_COOKIES_B64
+        sync: false
       - key: DATABASE_URL
         fromDatabase:
           name: slim-music-db

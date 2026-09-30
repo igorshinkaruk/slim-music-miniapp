@@ -9,7 +9,7 @@
 ## ⚠️ YouTube / ToS
 
 Завантаження з YouTube через **yt-dlp** може порушувати [умови YouTube](https://www.youtube.com/t/terms).  
-Використовуйте лише для **особистого / демо** тестування. У продакшені надавайте перевагу **прямим посиланням на аудіо** (mp3/m4a/ogg/wav) і встановіть `YOUTUBE_ENABLED=0`.
+Використовуйте лише для **особистого / демо** тестування. У продакшені надавайте перевагу **прямим посиланням на аудіо** (mp3/m4a/ogg/wav). Якщо YouTube увімкнено (`YOUTUBE_ENABLED=1`), yt-dlp часто впирається в bot-check — передайте Netscape cookies (не комітьте файл).
 
 ## Структура
 
@@ -93,7 +93,19 @@ python -m bot.main
 
 ## Змінні оточення
 
-Див. `.env.example`. Ключові: `BOT_TOKEN`, `ADMIN_IDS`, `WEBAPP_URL`, `DEV_BYPASS`, `DB_PATH`, `MEDIA_DIR`, `YOUTUBE_ENABLED`, `MAX_AUDIO_BYTES`.
+Див. `.env.example`. Ключові: `BOT_TOKEN`, `ADMIN_IDS`, `WEBAPP_URL`, `DEV_BYPASS`, `DB_PATH`, `MEDIA_DIR`, `YOUTUBE_ENABLED`, `YOUTUBE_COOKIES_FILE`, `YOUTUBE_COOKIES_B64`, `MAX_AUDIO_BYTES`.
+
+### YouTube cookies (bot-check)
+
+На старті, якщо задано `YOUTUBE_COOKIES_B64`, бекенд декодує його в `/tmp/youtube_cookies.txt`. Якщо задано `YOUTUBE_COOKIES_FILE` і файл існує — використовується він (пріоритет вище). Обидва виклики yt-dlp отримують `--cookies`, коли файл є. `YOUTUBE_ENABLED=0` як і раніше вимикає YouTube.
+
+Секрет **не** кладіть у git. На Render (сервіс `slim-music-miniapp`):
+
+```bash
+./scripts/encode_youtube_cookies.sh /path/to/cookies.txt
+```
+
+Скопіюйте рядок base64 в Environment → `YOUTUBE_COOKIES_B64`. Залиште `YOUTUBE_ENABLED=1`. Після збереження Render перезапустить сервіс.
 
 ## Деплой на Render (HTTPS)
 
@@ -101,7 +113,7 @@ python -m bot.main
 2. **New → Blueprint** (`render.yaml`) або Web Service вручну.
 3. Build: `pip install -r requirements.txt`
 4. Start: `uvicorn backend.main:app --host 0.0.0.0 --port $PORT`
-5. Env: `BOT_TOKEN`, `ADMIN_IDS`, `WEBAPP_URL=https://ВАШ.onrender.com/`, `DEV_BYPASS=0`, `DATABASE_URL` (Internal Postgres), `YOUTUBE_ENABLED=0` (рекомендовано), `BRAND_NAME=Slim Music`.
+5. Env: `BOT_TOKEN`, `ADMIN_IDS`, `WEBAPP_URL=https://ВАШ.onrender.com/`, `DEV_BYPASS=0`, `DATABASE_URL` (Internal Postgres), `YOUTUBE_ENABLED=1`, `YOUTUBE_COOKIES_B64` (з cookies.txt, див. скрипт вище — не в репозиторії), `BRAND_NAME=Slim Music`.
 6. Оновіть `WEBAPP_URL` після першого деплою → Manual Deploy.
 7. BotFather → прив’яжіть HTTPS URL.
 8. Окремо запустіть `python -m bot.main` (Worker) або локально з доступом до мережі.
